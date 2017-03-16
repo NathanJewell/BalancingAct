@@ -2,7 +2,8 @@
 
 Pencil::Pencil(const double& m, const double& l, const double& t, const sf::Vector2f& anchorpos)
 {
-	length = l*1000;	//converting to 1 mm/px (1000mm in m)
+	scale = 200;
+	length = l*scale;	//converting to 1 mm/px (1000mm in m)
 	mass = m;
 	theta = t;
 
@@ -23,38 +24,38 @@ Pencil::Pencil(const double& m, const double& l, const double& t, const sf::Vect
 	anchorvis.setOrigin(sf::Vector2f(anchorvis.getRadius(), anchorvis.getRadius()));
 	anchorvis.setPosition(position);
 	anchorvis.setFillColor(sf::Color::Cyan);
-	gravity = 9.81 * 1000; //converting to mm/m
+	gravity = 9.81 * scale; //converting to mm/m
 }
 
 void Pencil::update(const double& dt)
 {
-	
-
+	velocity.x += -1 * velocity.x/32;
+	velocity.y += -1 * velocity.y/32;
+	velocity += acceleration;
+	position += velocity;
 	COM = sf::Vector2f(sin(theta)*length, cos(theta)*length);
 
 	rect.setPosition(position);
 	anchorvis.setPosition(rect.getPosition() - rect.getOrigin());
 	
 	//anchor movement
-	//std::cout << "accel" << acceleration.x << ", " << acceleration.y << std::endl;
+	alpha += -1 * cos(theta) / length * acceleration.x * scale;	//x movement of anchor
+	alpha += -1 * sin(theta) / length * acceleration.y * scale;	//ym moevemnt of anchor
+	alpha += gravity / length * sin(theta);			//gravity's effect on pendulum
+	alpha += -1 * 1000 / (mass * length * length) * omega;
 
-	alpha += cos(theta) / length * acceleration.x * 10000;	//x movement of anchor
-	alpha += -1 * sin(theta) / length * acceleration.y * 10000;	//ym moevemnt of anchor
-	//alpha += gravity / length * sin(theta);			//gravity's effect on pendulum
-	alpha += -1 * 1000000 / (mass * length * length) * omega;
-
+	//std::cout << "acc: " << acceleration.x << ", " << acceleration.y << std::endl;
 	omega += alpha*dt;
-	
-	if (omega > 6.28 || omega < -6.28)
-	{
-		omega = -1 * signbit(omega) * 6.28;
-	}
+
+
 	theta += omega*dt;
-	alpha = 0;
 	if (theta > 2 * 3.1415)
 	{
 		theta -= 2 * 3.1415;
 	}
+
+	alpha = 0;
+
 	rect.setRotation(theta * 180 / 3.1415);
 	massCircle.setPosition(position + sf::Vector2f(cos(theta - 3.1415/2)*length, sin(theta - 3.1415/2)*length));
 }
@@ -66,10 +67,17 @@ void Pencil::draw(sf::RenderWindow& window)
 	window.draw(massCircle);
 }
 
-void Pencil::updateAnchor(const sf::Vector2f& pos, const sf::Vector2f& vel, const sf::Vector2f& acc)
+bool Pencil::balancing()
 {
-	position = pos;
-	velocity = vel;
+	if (theta < 0+3.1415/2 || theta > 3.1415+3.1415/2)
+	{
+		return true;
+	}
+	return false;
+}
+
+void Pencil::updateAnchor(const sf::Vector2f& acc)
+{
 	acceleration = acc;
 }
 

@@ -21,9 +21,11 @@ public:
 	void applyTorque(const double& force, const double& dist);	//apply a torque to the object at the specified distance from COM
 	void findNaturalTorque();									//Calculate torque simply from the weight of the object
 
-	void updateAnchor(const sf::Vector2f& pos, const sf::Vector2f& vel, const sf::Vector2f& acc);
+	void updateAnchor(const sf::Vector2f& acc);
+	bool balancing();
 
 private:
+	double scale;		//pixels per meter
 	double inertiaCOM; //moment of inertia rotating around COM
 	double inertiaEND; //moment of inertia rotating around one end
 
