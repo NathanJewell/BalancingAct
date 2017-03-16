@@ -12,13 +12,14 @@ int main()
 {
 	sf::RenderWindow window(sf::VideoMode(800, 800), "LAPIZ");
 	window.setFramerateLimit(144);
-	Pencil p = Pencil(10, .6, 0, sf::Vector2f(200, 200));
+	
+	Pencil p = Pencil(10, .6, 0, sf::Vector2f(800, 500));
 	double dt = 0;	//frametime in seconds
 	double lastframe = 0;
-	sf::Vector2f mousePosition(0, 0);
+	sf::Vector2f mousePosition(800, 500);
 	sf::Vector2f mouseVelocity(0, 0);
 	sf::Vector2f mouseAcceleration(0, 0);
-
+	sf::Mouse::setPosition((sf::Vector2i)mousePosition);
 	sf::Clock clock;
 	while (window.isOpen())
 	{
@@ -34,14 +35,17 @@ int main()
 		}
 
 		sf::Vector2f tmpPosition = (sf::Vector2f)sf::Mouse::getPosition(window);
+		std::cout << "position " << mousePosition.x << ", " << mousePosition.y << std::endl;
+		std::cout << "velocity " << mouseVelocity.x << ", " << mouseVelocity.y << std::endl;
+		std::cout << "acceleration " << mouseAcceleration.x << ", " << mouseAcceleration.y << std::endl;
 		sf::Vector2f tmpVelocity = (mousePosition - tmpPosition);
-		mouseAcceleration = divide((tmpVelocity - mouseVelocity), dt);
-		mouseVelocity = divide(tmpVelocity, dt);
+		mouseAcceleration = divide((tmpVelocity - mouseVelocity), 1);
+		mouseVelocity = divide(tmpVelocity, 1);
 		mousePosition = tmpPosition;
 
 		//std::cout << mouseVelocity.x << ", " << mouseVelocity.y << std::endl;
 		window.clear();
-		p.updateAnchor(mousePosition, mouseVelocity, mousePosition);
+		p.updateAnchor(mousePosition, mouseVelocity, mouseAcceleration);
 		p.update(dt);
 		p.draw(window);
 		window.display();

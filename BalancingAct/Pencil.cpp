@@ -6,14 +6,18 @@ Pencil::Pencil(const double& m, const double& l, const double& t, const sf::Vect
 	mass = m;
 	theta = t;
 
-	rect.setSize(sf::Vector2f(30, -length));
+	rect.setSize(sf::Vector2f(16, -length));
 	rect.setPosition(anchorpos);
 	rect.setFillColor(sf::Color::Red);
-	rect.setOrigin(sf::Vector2f(15, 0));
+	rect.setOrigin(sf::Vector2f(8, 0));
 
 	acceleration = sf::Vector2f(0, 0);
 	velocity = sf::Vector2f(0, 0);
 	position = rect.getOrigin() + rect.getPosition();
+
+	massCircle.setRadius(20);
+	massCircle.setOrigin(massCircle.getRadius(), massCircle.getRadius());
+	massCircle.setFillColor(sf::Color::Magenta);
 
 	anchorvis.setRadius(10);
 	anchorvis.setOrigin(sf::Vector2f(anchorvis.getRadius(), anchorvis.getRadius()));
@@ -29,31 +33,37 @@ void Pencil::update(const double& dt)
 	COM = sf::Vector2f(sin(theta)*length, cos(theta)*length);
 
 	rect.setPosition(position);
-	anchorvis.setPosition(rect.getOrigin() + rect.getPosition());
-
+	anchorvis.setPosition(rect.getPosition() - rect.getOrigin());
 	
 	//anchor movement
-	sf::Vector2f g(0, gravity);
-	sf::Vector2f A = acceleration - g;
-	double B = atan(A.x / A.y);
-	double magA = sqrt(A.x*A.x + A.y*A.y);
-	double A1 = magA*cos(alpha - B);
-	alpha = 0;
-	alpha += -1 * A1 / length * dt;
-	std::cout << "B: " << B << ", " << alpha << std::endl;
-	alpha += (gravity / length)*sin(theta);
+	//std::cout << "accel" << acceleration.x << ", " << acceleration.y << std::endl;
+
+	alpha += cos(theta) / length * acceleration.x * 10000;	//x movement of anchor
+	alpha += -1 * sin(theta) / length * acceleration.y * 10000;	//ym moevemnt of anchor
+	//alpha += gravity / length * sin(theta);			//gravity's effect on pendulum
+	alpha += -1 * 1000000 / (mass * length * length) * omega;
 
 	omega += alpha*dt;
+	
+	if (omega > 6.28 || omega < -6.28)
+	{
+		omega = -1 * signbit(omega) * 6.28;
+	}
 	theta += omega*dt;
 	alpha = 0;
-
-	rect.setRotation(theta * 180 / 3.14);
+	if (theta > 2 * 3.1415)
+	{
+		theta -= 2 * 3.1415;
+	}
+	rect.setRotation(theta * 180 / 3.1415);
+	massCircle.setPosition(position + sf::Vector2f(cos(theta - 3.1415/2)*length, sin(theta - 3.1415/2)*length));
 }
 
 void Pencil::draw(sf::RenderWindow& window)
 {
 	window.draw(rect);
 	window.draw(anchorvis);
+	window.draw(massCircle);
 }
 
 void Pencil::updateAnchor(const sf::Vector2f& pos, const sf::Vector2f& vel, const sf::Vector2f& acc)

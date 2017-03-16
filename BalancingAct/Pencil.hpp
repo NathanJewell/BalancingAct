@@ -3,9 +3,12 @@
 #include <SFML\Graphics.hpp>
 #include <iostream>
 #include <math.h>
+#include <cmath>
+#include <algorithm>
 
 //Pencil.cpp
 /// Class to deal with physics of a uniform rod not dissimilar from a pencil ///
+//Algorithms ty https://www.myphysicslab.com/pendulum/moveable-pendulum/moveable-pendulum-en.html
 
 class Pencil
 {
@@ -39,10 +42,13 @@ private:
 
 	sf::RectangleShape rect;
 	sf::CircleShape anchorvis;
+	sf::CircleShape massCircle;
 
 	std::vector<double> torques;	//torques to be applied to object in the upcoming frame
 
 	double gravity;
+
+	
 
 
 };
