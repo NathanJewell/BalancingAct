@@ -1,6 +1,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
 #include "Pencil.hpp"
 
 sf::Vector2f divide(const sf::Vector2f& vec, const double& scalar)
@@ -13,7 +15,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(1900, 1000), "LAPIZ");
 	window.setFramerateLimit(144);
 	
-	Pencil p = Pencil(10, 2, 3.1415/32, sf::Vector2f(600, 300));
+	Pencil p = Pencil(10, .2, 3.1415/32, sf::Vector2f(600, 300));
 	double dt = 0;	//frametime in seconds
 	double lastframe = 0;
 	//sf::Vector2f position(800, 500);
@@ -60,7 +62,7 @@ int main()
 		{
 			t = 0;
 		}
-		std::cout << "High Score:" << t << std::endl;
+		//std::cout << "High Score:" << t << std::endl;
 
 		/*sf::Vector2f tmpPosition = (sf::Vector2f)sf::Mouse::getPosition(window);
 		std::cout << "position " << mousePosition.x << ", " << mousePosition.y << std::endl;

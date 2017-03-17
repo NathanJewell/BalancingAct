@@ -2,7 +2,7 @@
 
 Pencil::Pencil(const double& m, const double& l, const double& t, const sf::Vector2f& anchorpos)
 {
-	scale = 200;
+	scale = 1000;
 	length = l*scale;	//converting to 1 mm/px (1000mm in m)
 	mass = m;
 	theta = t;
@@ -46,13 +46,11 @@ void Pencil::update(const double& dt)
 
 	//std::cout << "acc: " << acceleration.x << ", " << acceleration.y << std::endl;
 	omega += alpha*dt;
-
+	std::cout << theta << std::endl;
 
 	theta += omega*dt;
-	if (theta > 2 * 3.1415)
-	{
-		theta -= 2 * 3.1415;
-	}
+	int qo = floor(theta / (2 * 3.1415));
+	theta = ldiv(theta, 2 * 3.1415).rem;
 
 	alpha = 0;
 

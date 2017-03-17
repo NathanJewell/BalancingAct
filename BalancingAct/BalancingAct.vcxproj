@@ -162,8 +162,11 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pencil.cpp" />
     <ClCompile Include="PhysicsObject.cpp" />
+    <ClCompile Include="Qlearn.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="NHood.hpp" />
+    <ClInclude Include="Qlearn.hpp" />
     <ClInclude Include="Pencil.hpp" />
     <ClInclude Include="PhysicsObject.hpp" />
   </ItemGroup>
