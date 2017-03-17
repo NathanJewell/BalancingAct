@@ -42,7 +42,7 @@ void Pencil::update(const double& dt)
 	alpha += -1 * cos(theta) / length * acceleration.x * scale;	//x movement of anchor
 	alpha += -1 * sin(theta) / length * acceleration.y * scale;	//ym moevemnt of anchor
 	alpha += gravity / length * sin(theta);			//gravity's effect on pendulum
-	alpha += -1 * 1000 / (mass * length * length) * omega;
+	//alpha += -1 * 1000 / (mass * length * length) * omega;	//friction/decay
 
 	//std::cout << "acc: " << acceleration.x << ", " << acceleration.y << std::endl;
 	omega += alpha*dt;
@@ -50,7 +50,7 @@ void Pencil::update(const double& dt)
 
 	theta += omega*dt;
 	int qo = floor(theta / (2 * 3.1415));
-	theta = ldiv(theta, 2 * 3.1415).rem;
+	theta -= qo * 2 * 3.1415;
 
 	alpha = 0;
 
@@ -65,26 +65,24 @@ void Pencil::draw(sf::RenderWindow& window)
 	window.draw(massCircle);
 }
 
+void Pencil::updateAnchor(const sf::Vector2f& acc)
+{
+	acceleration = acc;
+}
+
+
 bool Pencil::balancing()
 {
-	if (theta < 0+3.1415/2 || theta > 3.1415+3.1415/2)
+	if (theta < 0 + 3.1415 / 2 || theta > 3.1415 + 3.1415 / 2)
 	{
 		return true;
 	}
 	return false;
 }
 
-void Pencil::updateAnchor(const sf::Vector2f& acc)
+
+std::vector<double> Pencil::getState()
 {
-	acceleration = acc;
-}
-
-void Pencil::applyTorque(const double& force, const double& dist)
-{
-
-}
-
-void Pencil::findNaturalTorque()
-{
-
+	std::vector<double> tmp;
+	tmp.push_back(alpha); tmp.push_back(omega); tmp.push_back(theta);
 }

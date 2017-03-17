@@ -18,11 +18,10 @@ public:
 	void update(const double& dt);			//update physics
 	void draw(sf::RenderWindow& window);	//draw to screen
 
-	void applyTorque(const double& force, const double& dist);	//apply a torque to the object at the specified distance from COM
-	void findNaturalTorque();									//Calculate torque simply from the weight of the object
-
 	void updateAnchor(const sf::Vector2f& acc);
 	bool balancing();
+
+	std::vector<double> getState();	//returns alpha,omega,theta
 
 private:
 	double scale;		//pixels per meter
