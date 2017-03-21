@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <map>
+#include "Utils.hpp"
 
 class Net
 {
@@ -18,10 +20,13 @@ public:
 	void reset();	//re-randomize all weights
 
 	//network training
-	enum activationFunction {LINEAR, SIGMOID, STEP};
-	enum costFunction {SQUAREDERR};
-	void setActivationFxn(const activationFunction& type);	//set the networks activation function to one of the enumerated types
-	void setCostFxn(const costFunction& type);
+	typedef double(*tfunc)(const double&);
+	enum fxnType {LINEAR, SIGMOID, STEP, SQUAREDERR};
+
+	std::map<fxnType, tfunc> tfuncs;
+
+	void setActivationFxn(const fxnType& type);	//set the networks activation function to one of the enumerated types
+	void setCostFxn(const fxnType& type);
 
 	void setInput(const int& node, const double& value);	//sets specified input node to specified value
 	void setInput(const std::vector<double> & values);		//sets all input nodes values
@@ -34,6 +39,8 @@ public:
 private:
 	double rate;	//learning rate for the network
 
+	tfunc activation;
+	tfunc cost;
 
 	std::vector<Layer> layers;	//all layers for network
 
@@ -42,7 +49,7 @@ private:
 class Layer
 {
 public:
-	Layer(const int& size);
+	Layer(const int& numNodes);
 	
 	void randomize();	//randomizes weight
 	void initialize();
@@ -55,6 +62,9 @@ public:
 
 	int getSize();
 	std::vector<double> getValues();
+	void setValues(const std::vector<double>& vals);
+	void setValues(const int& index, const double& value);
+
 private:
 	int size;	//number of nodes
 

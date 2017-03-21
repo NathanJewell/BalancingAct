@@ -4,6 +4,11 @@ Net::Net(const int& INnodes, const int& OUTnodes)
 {
 	layers.push_back(Layer(OUTnodes));
 	layers.push_back(Layer(INnodes));
+
+	tfuncs[LINEAR] = utils::linear;
+	tfuncs[SIGMOID] = utils::sigmoid;
+	tfuncs[STEP] = utils::step;
+	tfuncs[SQUAREDERR] = utils::squaredErr;
 }
 
 Layer Net::getOutputLayer()
@@ -48,30 +53,24 @@ void Net::reset()
 	}
 }
 
-void Net::setActivationFxn(const activationFunction& type)
+void Net::setActivationFxn(const fxnType& type)
 {
-	if (type == LINEAR)
-	{
+	activation = tfuncs[type];
+}
 
-	}
-	else if (type == SIGMOID)
-	{
-
-	}
-	else if (type == STEP)
-	{
-
-	}
+void Net::setCostFxn(const fxnType& type)
+{
+	cost = tfuncs[type];
 }
 
 void Net::setInput(const int& node, const double& value)
 {
-	//set layer 0 values
+	layers[0].setValues(node, value);
 }
 
 void Net::setInput(const std::vector<double>& values)
 {
-	//set layer 0 values
+	layers[0].setValues(values);
 }
 
 void Net::feedForward()
@@ -87,9 +86,9 @@ void Net::backPropogate()
 
 
 
-Layer::Layer(const int& size)
+Layer::Layer(const int& numNodes)
 {
-	
+	size = numNodes;
 }
 
 void Layer::setChild(Layer* layer)
@@ -117,10 +116,34 @@ void Layer::feedForward()
 		}
 		values[i] += biasValues[i] * biasWeights[i];
 	}
-	child->feedForward();
+	if (child)
+	{
+		child->feedForward();
+	}
+
 }
 
 void Layer::backPropogate()
 {
 
+}
+
+int Layer::getSize()
+{
+	return size;
+}
+
+std::vector<double> Layer::getValues()
+{
+	return values;
+}
+
+void Layer::setValues(const std::vector<double>& vals)
+{
+	values = vals;
+}
+
+void Layer::setValues(const int& index, const double& value)
+{
+	values[index] = value;
 }

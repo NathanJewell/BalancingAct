@@ -85,4 +85,5 @@ std::vector<double> Pencil::getState()
 {
 	std::vector<double> tmp;
 	tmp.push_back(alpha); tmp.push_back(omega); tmp.push_back(theta);
+	return tmp;
 }
