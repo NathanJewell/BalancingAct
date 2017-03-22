@@ -2,13 +2,19 @@
 
 Net::Net(const int& INnodes, const int& OUTnodes)
 {
-	layers.push_back(Layer(OUTnodes));
-	layers.push_back(Layer(INnodes));
+
 
 	tfuncs[LINEAR] = utils::linear;
 	tfuncs[SIGMOID] = utils::sigmoid;
 	tfuncs[STEP] = utils::step;
 	tfuncs[SQUAREDERR] = utils::squaredErr;
+
+	//default values
+	activation = tfuncs[SIGMOID];
+	cost = tfuncs[SQUAREDERR];
+
+	layers.push_back(Layer(OUTnodes, activation, cost));
+	layers.push_back(Layer(INnodes, activation, cost));
 }
 
 Layer Net::getOutputLayer()
@@ -24,7 +30,7 @@ Layer Net::getInputLayer()
 void Net::makeHiddenLayer(const int& nodes)
 {
 	auto it = layers.begin() + 1;		//get iterator for second spot in array
-	layers.insert(it, Layer(nodes));	//insert new layer with specified number of nodes
+	layers.insert(it, Layer(nodes, activation, cost));	//insert new layer with specified number of nodes
 }
 
 void Net::initialize()
@@ -81,14 +87,16 @@ void Net::feedForward()
 
 void Net::backPropogate()
 {
-	
+	layers.back().backPropogate();
 }
 
 
 
-Layer::Layer(const int& numNodes)
+Layer::Layer(const int& numNodes, tfunc a, tfunc c)
 {
 	size = numNodes;
+	activation = a;
+	cost = c;
 }
 
 void Layer::setChild(Layer* layer)
@@ -106,15 +114,17 @@ void Layer::feedForward()
 	//calculate values
 	std::vector<double>& inputs = parent->getValues();
 
-	std::fill(values.begin(), values.end(), 0);	//reset all values to 0 so they can be summatively calculated
+	std::fill(values.begin(), values.end(), 0);	//reset all values to 0 
 	//this is all kinda unsafe because not checking size of input/weight arrays but eh.
 	for (unsigned int i = 0; i < weights.size(); i++)	//cycling through each node
 	{
+		double value = 0;
 		for (unsigned int b = 0; b < weights[i].size(); b++)
 		{
-			values[i] += inputs[b] * weights[i][b];
+			value += inputs[b] * weights[i][b];
 		}
-		values[i] += biasValues[i] * biasWeights[i];
+		value += biasValues[i] * biasWeights[i];
+		values[i] = activation(value);	//pass through activation function for final output
 	}
 	if (child)
 	{
@@ -125,7 +135,52 @@ void Layer::feedForward()
 
 void Layer::backPropogate()
 {
+	//calculating errors
+	if (!child) //output layer
+	{
+		for (unsigned int i = 0; i < values.size(); i++)
+		{
+			errors[i] = cost(DIFF);
+		}
+	}
+	else if (!parent)	//input layer -- no errors
+	{
+		std::fill(errors.begin(), errors.end(), 0);
+	}
+	else //hidden layer
+	{
+		std::vector<double>& childErrors = child->getErrors();
 
+		for (unsigned int i = 0; i < values.size(); i++)	//iterate through every node
+		{
+			double sum = 0;
+			for (unsigned int b = 0; b < child->getSize(); b++)	//iterate through all nodes connected to that node downstream
+			{
+				sum += childErrors[b] * weights[i][b];
+			}
+			errors[i] = sum;
+		}
+
+	}
+	//adjusting weights
+	if (child)
+	{
+		std::vector<double>& childErrors = child->getErrors();
+
+		for (unsigned int i = 0; i < values.size(); i++)	//for each neuron in this layer
+		{
+			for (unsigned int b = 0; b < child->getSize(); b++)	//for each neuron in child layer
+			{
+				double dw = LEARNINGRATE * (childErrors[b] * values[i]);	//multiple child nodes error for this node by its value to find error
+				weights[i][b] += dw;
+			}
+		}
+		//adjust bias
+	}
+	if (parent)
+	{
+		parent->backPropogate();
+	}
 }
 
 int Layer::getSize()
@@ -146,4 +201,9 @@ void Layer::setValues(const std::vector<double>& vals)
 void Layer::setValues(const int& index, const double& value)
 {
 	values[index] = value;
+}
+
+std::vector<double> Layer::getErrors()
+{
+	return errors;
 }

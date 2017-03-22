@@ -3,6 +3,8 @@
 #include <map>
 #include "Utils.hpp"
 
+typedef double(*tfunc)(const double&);
+
 class Net
 {
 public:
@@ -20,7 +22,7 @@ public:
 	void reset();	//re-randomize all weights
 
 	//network training
-	typedef double(*tfunc)(const double&);
+
 	enum fxnType {LINEAR, SIGMOID, STEP, SQUAREDERR};
 
 	std::map<fxnType, tfunc> tfuncs;
@@ -49,7 +51,7 @@ private:
 class Layer
 {
 public:
-	Layer(const int& numNodes);
+	Layer(const int& numNodes, tfunc a, tfunc c);
 	
 	void randomize();	//randomizes weight
 	void initialize();
@@ -64,6 +66,8 @@ public:
 	std::vector<double> getValues();
 	void setValues(const std::vector<double>& vals);
 	void setValues(const int& index, const double& value);
+
+	std::vector<double> getErrors();
 
 private:
 	int size;	//number of nodes
@@ -80,4 +84,7 @@ private:
 	std::vector<double> biasWeights;
 
 	std::vector<double> errors;
+
+	tfunc activation;	//pointer to activation fxn pointer
+	tfunc cost;		//pointer to cost fxn pointer
 };

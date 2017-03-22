@@ -18,13 +18,7 @@
     <ClCompile Include="Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PhysicsObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Pencil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Qlearn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NN.cpp">
@@ -35,13 +29,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PhysicsObject.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Pencil.hpp">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Qlearn.hpp">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="NN.hpp">
