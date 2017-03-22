@@ -3,6 +3,7 @@
 Net::Net(const int& INnodes, const int& OUTnodes)
 {
 
+	srand((unsigned)time(NULL));
 
 	tfuncs[LINEAR] = utils::linear;
 	tfuncs[SIGMOID] = utils::sigmoid;
@@ -133,14 +134,14 @@ void Layer::feedForward()
 
 }
 
-void Layer::backPropogate()
+void Layer::backPropogate(const double& fitness)
 {
 	//calculating errors
 	if (!child) //output layer
 	{
 		for (unsigned int i = 0; i < values.size(); i++)
 		{
-			errors[i] = cost(DIFF);
+			errors[i] = cost();
 		}
 	}
 	else if (!parent)	//input layer -- no errors

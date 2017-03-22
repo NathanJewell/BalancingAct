@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <cmath>
+#include <iostream>
 #include "Utils.hpp"
 
 typedef double(*tfunc)(const double&);
@@ -33,8 +35,11 @@ public:
 	void setInput(const int& node, const double& value);	//sets specified input node to specified value
 	void setInput(const std::vector<double> & values);		//sets all input nodes values
 
+	std::vector<double> getOutput();
+	void setDesiredOutput(const std::vector<double>& out);
+
 	void feedForward();		//propogates inputs through network
-	void backPropogate();	//adjusts weights based on utility analysis
+	void backPropogate(const double& fitness);	//adjusts weights based on utility analysis
 
 	//activation functions
 
@@ -60,7 +65,7 @@ public:
 	void setParent(Layer* layer);
 
 	void feedForward();
-	void backPropogate();
+	void backPropogate(const double& fitness);
 
 	int getSize();
 	std::vector<double> getValues();
@@ -77,7 +82,6 @@ private:
 
 	//no individual node/neuron/perceptron class all the stuff is right here
 	std::vector<std::vector<double> > weights;		//each node has a weight for every node in the previous layer
-	std::vector<std::vector<double> > deltaWeights;	//same deal
 	std::vector<double> values;	//one output value is the sum of all weights*inputs passed through the activation fxn (also bias)
 
 	std::vector<double> biasValues;
