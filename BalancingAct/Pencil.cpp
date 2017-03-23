@@ -87,3 +87,8 @@ std::vector<double> Pencil::getState()
 	tmp.push_back(alpha); tmp.push_back(omega); tmp.push_back(theta);
 	return tmp;
 }
+
+double Pencil::evalQ()	//higher is worse right now :/
+{
+	return abs(theta);
+}

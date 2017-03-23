@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Pencil.hpp"
+#include "NN.hpp"
 
 sf::Vector2f divide(const sf::Vector2f& vec, const double& scalar)
 {
@@ -18,12 +19,15 @@ int main()
 	Pencil p = Pencil(10, .2, 3.1415/32, sf::Vector2f(600, 300));
 	double dt = 0;	//frametime in seconds
 	double lastframe = 0;
-	//sf::Vector2f position(800, 500);
-	//sf::Vector2f velocity(0, 0);
+
 	sf::Vector2f acceleration(0, 0);
 	double speed = 100;
 	double t = 0;	//balancing time
-	//sf::Mouse::setPosition((sf::Vector2i)mousePosition);
+
+	Net net(3, 1, SIGMOID, SIGMOIDD, SQUAREDERR);
+	net.makeHiddenLayer(3);
+	net.initialize();
+
 	sf::Clock clock;
 	while (window.isOpen())
 	{
@@ -62,21 +66,19 @@ int main()
 		{
 			t = 0;
 		}
-		//std::cout << "High Score:" << t << std::endl;
+		
 
-		/*sf::Vector2f tmpPosition = (sf::Vector2f)sf::Mouse::getPosition(window);
-		std::cout << "position " << mousePosition.x << ", " << mousePosition.y << std::endl;
-		std::cout << "velocity " << mouseVelocity.x << ", " << mouseVelocity.y << std::endl;
-		std::cout << "acceleration " << mouseAcceleration.x << ", " << mouseAcceleration.y << std::endl;
-		sf::Vector2f tmpVelocity = (mousePosition - tmpPosition);
-		mouseAcceleration = divide((tmpVelocity - mouseVelocity), 1);
-		mouseVelocity = divide(tmpVelocity, 1);
-		mousePosition = tmpPosition;
-		*/
-		//std::cout << mouseVelocity.x << ", " << mouseVelocity.y << std::endl;
+		net.setInput(p.getState);						//give network the pencil state
+		net.feedForward();								//calculate new values
+		std::vector<double> output = net.getOutput();	//calculate new acceleration
+
 		window.clear();
-		p.updateAnchor(acceleration);
+
+		p.updateAnchor(sf::Vector2f((output[0]-.5)*speed, dt));	//pretending like the movement is just like the mouse
 		p.update(dt);
+
+		net.backPropogate(p.evalQ());	//evaluate new state and adjust weights
+
 		p.draw(window);
 		window.display();
 

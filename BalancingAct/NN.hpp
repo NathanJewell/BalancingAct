@@ -2,15 +2,22 @@
 #include <vector>
 #include <map>
 #include <cmath>
+#include <ctime>
 #include <iostream>
 #include "Utils.hpp"
 
+//network creation process steps **this can be streamlines... but for now...
+//Create net(IN, OUT, activation, dactivation, cost)
+//initialize net
+//train network
+
 typedef double(*tfunc)(const double&);
+enum fxnType { LINEAR, SIGMOID, STEP, SQUAREDERR, LINEARD, SIGMOIDD, STEPD};
 
 class Net
 {
 public:
-	Net(const int& INnodes, const int& OUTnodes);
+	Net(const int& INnodes, const int& OUTnodes, fxnType a, fxnType da, fxnType c);
 
 	//network retrieval
 	Layer getOutputLayer();
@@ -25,7 +32,7 @@ public:
 
 	//network training
 
-	enum fxnType {LINEAR, SIGMOID, STEP, SQUAREDERR};
+	
 
 	std::map<fxnType, tfunc> tfuncs;
 
@@ -47,6 +54,7 @@ private:
 	double rate;	//learning rate for the network
 
 	tfunc activation;
+	tfunc dactivation;	//derivative of activation fxn
 	tfunc cost;
 
 	std::vector<Layer> layers;	//all layers for network
@@ -59,7 +67,6 @@ public:
 	Layer(const int& numNodes, tfunc a, tfunc c);
 	
 	void randomize();	//randomizes weight
-	void initialize();
 
 	void setChild(Layer* layer);
 	void setParent(Layer* layer);
@@ -90,5 +97,6 @@ private:
 	std::vector<double> errors;
 
 	tfunc activation;	//pointer to activation fxn pointer
+	tfunc dactivation;
 	tfunc cost;		//pointer to cost fxn pointer
 };

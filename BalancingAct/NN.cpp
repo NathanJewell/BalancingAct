@@ -1,6 +1,6 @@
 #include "NN.hpp"
 
-Net::Net(const int& INnodes, const int& OUTnodes)
+Net::Net(const int& INnodes, const int& OUTnodes, fxnType a, fxnType da, fxnType c)
 {
 
 	srand((unsigned)time(NULL));
@@ -9,10 +9,14 @@ Net::Net(const int& INnodes, const int& OUTnodes)
 	tfuncs[SIGMOID] = utils::sigmoid;
 	tfuncs[STEP] = utils::step;
 	tfuncs[SQUAREDERR] = utils::squaredErr;
+	tfuncs[LINEARD] = utils::linearD;
+	tfuncs[SIGMOIDD] = utils::sigmoidD;
+	tfuncs[STEPD] = utils::stepD;
 
 	//default values
-	activation = tfuncs[SIGMOID];
-	cost = tfuncs[SQUAREDERR];
+	activation = tfuncs[a];
+	dactivation = tfuncs[da];
+	cost = tfuncs[c];
 
 	layers.push_back(Layer(OUTnodes, activation, cost));
 	layers.push_back(Layer(INnodes, activation, cost));
@@ -86,7 +90,7 @@ void Net::feedForward()
 }
 
 
-void Net::backPropogate()
+void Net::backPropogate(const double& fitness)
 {
 	layers.back().backPropogate();
 }
@@ -98,6 +102,28 @@ Layer::Layer(const int& numNodes, tfunc a, tfunc c)
 	size = numNodes;
 	activation = a;
 	cost = c;
+}
+
+void Layer::randomize()
+{
+	errors.clear();
+	values.clear();
+	biasValues.clear();
+	biasWeights.clear();
+	weights.clear();
+	for (unsigned int i = 0; i < size; i++)
+	{
+		errors.push_back(utils::random());
+		values.push_back(utils::random());
+		biasValues.push_back(utils::random());
+		biasWeights.push_back(utils::random());
+		std::vector<double> tmp;
+		for (unsigned int b = 0; b < parent->getSize(); b++)
+		{
+			tmp.push_back(utils::random());
+		}
+		weights.push_back(tmp);
+	}
 }
 
 void Layer::setChild(Layer* layer)
@@ -159,7 +185,7 @@ void Layer::backPropogate(const double& fitness)
 			{
 				sum += childErrors[b] * weights[i][b];
 			}
-			errors[i] = sum;
+			errors[i] = dactivation(sum);
 		}
 
 	}

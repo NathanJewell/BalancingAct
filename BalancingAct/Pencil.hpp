@@ -23,6 +23,8 @@ public:
 
 	std::vector<double> getState();	//returns alpha,omega,theta
 
+	double evalQ();					//returns value approximating how good it is right now
+
 private:
 	double scale;		//pixels per meter
 	double inertiaCOM; //moment of inertia rotating around COM
