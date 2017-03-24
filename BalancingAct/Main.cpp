@@ -26,7 +26,11 @@ int main()
 
 	Net net(3, 1, SIGMOID, SIGMOIDD, SQUAREDERR);
 	net.makeHiddenLayer(3);
+	net.makeHiddenLayer(10);
+	net.makeHiddenLayer(3);
 	net.initialize();
+	double fitness = 0;
+	double lastfitness = 0;
 
 	sf::Clock clock;
 	while (window.isOpen())
@@ -67,17 +71,25 @@ int main()
 			t = 0;
 		}
 		
-
-		net.setInput(p.getState);						//give network the pencil state
+		std::vector<double> state = p.getState();
+		net.setInput(state);						//give network the pencil state
 		net.feedForward();								//calculate new values
 		std::vector<double> output = net.getOutput();	//calculate new acceleration
+		std::cout << "output:" << state[2] << std::endl;
 
 		window.clear();
 
-		p.updateAnchor(sf::Vector2f((output[0]-.5)*speed, dt));	//pretending like the movement is just like the mouse
+		p.updateAnchor(sf::Vector2f((signbit(output[0]-.5)+.5)*speed*5*dt, dt));	//pretending like the movement is just like the mouse
 		p.update(dt);
 
-		net.backPropogate(p.evalQ());	//evaluate new state and adjust weights
+		fitness = p.evalQ();
+		net.backPropogate(lastfitness - fitness);	//evaluate new state and adjust weights
+		lastfitness = fitness;
+
+		if (abs(state[2]) > 3.1415 / 2)
+		{
+			p.reset();
+		}
 
 		p.draw(window);
 		window.display();

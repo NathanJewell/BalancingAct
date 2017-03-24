@@ -25,6 +25,8 @@ public:
 
 	double evalQ();					//returns value approximating how good it is right now
 
+	void reset();
+
 private:
 	double scale;		//pixels per meter
 	double inertiaCOM; //moment of inertia rotating around COM

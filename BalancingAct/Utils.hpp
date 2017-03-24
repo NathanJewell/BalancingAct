@@ -2,20 +2,24 @@
 #include <math.h>
 #define LEARNINGRATE .5
 
+
+typedef double(*tfunc)(const double&);
+enum fxnType { LINEAR, SIGMOID, STEP, SQUAREDERR, LINEARD, SIGMOIDD, STEPD };
+
 namespace utils
 {
-	inline double linear(const double& in);
-	inline double linearD(const double& in);
+	double linear(const double& in);
+	double linearD(const double& in);
 
-	inline double sigmoid(const double& in);
-	inline double sigmoidD(const double& in);
+	double sigmoid(const double& in);
+	double sigmoidD(const double& in);
 
-	inline double step(const double& in);
-	inline double stepD(const double& in);
+	double step(const double& in);
+	double stepD(const double& in);
 
-	inline double squaredErr(const double& in);
+	double squaredErr(const double& in);
 
-	inline double random();
+	double random();
 
 	
 }

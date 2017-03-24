@@ -3,29 +3,30 @@
 #include <cmath>
 #include <iostream>
 
-using namespace utils;
 
-inline double linear(const double& in)
+
+ double utils::linear(const double& in)
 {
 	return in;
 }
 
-inline double linearD(const double& in)
+ double utils::linearD(const double& in)
 {
 	//not done
+	return 0;
 }
 
-inline double sigmoid(const double& in)
+ double utils::sigmoid(const double& in)
 {
 	return 1 / (1 + pow(2.71828, in));
 }
 
-inline double sigmoidD(const double& in)
+ double utils::sigmoidD(const double& in)
 {
 	return in * (1 - in);
 }
 
-inline double step(const double& in)
+ double utils::step(const double& in)
 {
 	if (in > .5)
 	{
@@ -34,12 +35,17 @@ inline double step(const double& in)
 	return 0;
 }
 
-inline double squaredErr(const double& in)
+ double utils::stepD(const double& in)
+ {
+	 return 0;
+ }
+
+ double utils::squaredErr(const double& in)
 {
 	return .5*pow(in, 2);
 }
 
-inline double random()
+ double utils::random()
 {
 	return ((double)rand() / (RAND_MAX));
 }

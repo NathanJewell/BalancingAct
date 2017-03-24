@@ -29,6 +29,7 @@ Pencil::Pencil(const double& m, const double& l, const double& t, const sf::Vect
 
 void Pencil::update(const double& dt)
 {
+	alpha = 0;
 	velocity.x += -1 * velocity.x/32;
 	velocity.y += -1 * velocity.y/32;
 	velocity += acceleration;
@@ -46,13 +47,11 @@ void Pencil::update(const double& dt)
 
 	//std::cout << "acc: " << acceleration.x << ", " << acceleration.y << std::endl;
 	omega += alpha*dt;
-	std::cout << theta << std::endl;
+	//std::cout << theta << std::endl;
 
 	theta += omega*dt;
-	int qo = floor(theta / (2 * 3.1415));
-	theta -= qo * 2 * 3.1415;
-
-	alpha = 0;
+	//int qo = floor(theta / (2 * 3.1415));
+	//theta -= qo * 2 * 3.1415;
 
 	rect.setRotation(theta * 180 / 3.1415);
 	massCircle.setPosition(position + sf::Vector2f(cos(theta - 3.1415/2)*length, sin(theta - 3.1415/2)*length));
@@ -91,4 +90,15 @@ std::vector<double> Pencil::getState()
 double Pencil::evalQ()	//higher is worse right now :/
 {
 	return abs(theta);
+}
+
+void Pencil::reset()
+{
+	position = sf::Vector2f(400, 400);
+	velocity = sf::Vector2f(0, 0);
+	acceleration = sf::Vector2f(0, 0);
+
+	theta = 3.141592 / 32;
+	omega = 0;
+	alpha = 0;
 }

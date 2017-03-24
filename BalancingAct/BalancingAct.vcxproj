@@ -159,12 +159,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="NN.cpp" />
     <ClCompile Include="Pencil.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Layer.hpp" />
     <ClInclude Include="NN.hpp" />
     <ClInclude Include="Pencil.hpp" />
     <ClInclude Include="Utils.hpp" />
